@@ -6,33 +6,32 @@ import java.util.Date;
 public class Server {
 
 	public final static int PORT = 1200;
+
+	private static int clients = 0;
 	
 	
 	public static void main(String[] args) {
 
-		//System.setProperty("line.separador","\r\n");
+		System.setProperty("line.separador","\r\n");
 		
-		ServerSocket socket = null;
 
-		try {
-			socket = new ServerSocket(PORT);
-		} catch (IOException e) {
-			System.out.print("Fail creating the socket at port " + PORT + "\n");
-		}
-		
+		ServerSocket socket = createSocket();
 
 		
 		while (true) {
 			
 			try (Socket conexion = socket.accept()) {
 				
+
+
+
 				OutputStream outputStream = conexion.getOutputStream();
 				Writer writer = new OutputStreamWriter(outputStream, "ASCII");
 				
 				
-				String message = "Hola que tal";
+				String message = "MOVE\nArguments: 0, 1, 2, etc...";
 				
-				writer.write(message + "\r\n");
+				writer.write(message);
 				writer.flush();
 			
 				conexion.close();
@@ -43,4 +42,23 @@ public class Server {
 			}
 		}
 	}
+
+
+
+
+
+
+
+	private static ServerSocket createSocket() {
+		ServerSocket socket = null;
+
+		try {
+			socket = new ServerSocket(PORT);
+		} catch (IOException e) {
+			System.out.print("Fail creating the socket at port " + PORT + "\n");
+		}
+
+		return socket;
+	}
+
 }
