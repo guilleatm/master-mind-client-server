@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Server {
 
-	public static int PORT = 13;
+	public final static int PORT = 1200;
 	
 	
 	public static void main(String[] args) {
@@ -30,9 +30,9 @@ public class Server {
 				Writer writer = new OutputStreamWriter(outputStream, "ASCII");
 				
 				
-				Date day = new Date();
+				String message = "Hola que tal";
 				
-				writer.write(day.toString() + "\r\n");
+				writer.write(message + "\r\n");
 				writer.flush();
 			
 				conexion.close();

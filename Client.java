@@ -12,7 +12,7 @@ public class Client {
 	
 
 	String serverName = "localhost";
-	int port = 420;
+	int port = 1200;
 
 	
 	try {
@@ -26,18 +26,18 @@ public class Client {
 		System.out.print("Conexion establecida" + "\r\n");
 		System.out.print("Nombre del servidor: " + serverName + " " + port + "\r\n");
 
-		// OutputStream outputStream = socket.getOutputStream();
-		// InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-		// PrintWriter comunicator = new PrintWriter(outputStream, true);
-		// comunicator.println(message);
+		OutputStream outputStream = socket.getOutputStream();
+		InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+		PrintWriter comunicator = new PrintWriter(outputStream, true);
+		comunicator.println("message");
 
 
-		// BufferedReader lecture = new BufferedReader(inputStreamReader);
+		BufferedReader lecture = new BufferedReader(inputStreamReader);
 
 
-		// for (String line = lecture.readLine(); line != null; line = lecture.readLine()) {
-        //     System.out.print("\r\n" + line);
-    	// }
+		for (String line = lecture.readLine(); line != null; line = lecture.readLine()) {
+            System.out.print("\r\n" + line);
+    	}
 		
 
 		socket.close();
