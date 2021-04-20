@@ -7,6 +7,8 @@ public class Server {
 
 	public final static int PORT = 1200;
 	private static int clients = 0;
+	public static int turn = 0;
+	public static int numPlayers = 0;
 
 	// Server actions
 	private static final String[] actions = {"C_MOVES"};
@@ -22,50 +24,55 @@ public class Server {
 
 		initServerSocket();
 
-		
-		while (true) {
-			
-			try (Socket socket = serverSocket.accept()) { // try-with-resources --> socket is autoclosed.
-				
+	
 
-				ClientThread clientThread = new ClientThread(socket);
+		while (true) {
+
+			
+			try { // try-with-resources --> socket is autoclosed.
+				
+				
+				
+				Socket socket = serverSocket.accept();
+				ClientThread clientThread = new ClientThread(socket, numPlayers++);
 				clientThread.start();
 
 
 
-				// OutputStream outputStream = socket.getOutputStream();
-				// InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
 
-				// //Writer out = new OutputStreamWriter(outputStream, "ASCII");
-				// PrintWriter out = new PrintWriter(outputStream, true);
-				// BufferedReader in = new BufferedReader(inputStreamReader);
+			// 	// OutputStream outputStream = socket.getOutputStream();
+			// 	// InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
 
-
-
+			// 	// //Writer out = new OutputStreamWriter(outputStream, "ASCII");
+			// 	// PrintWriter out = new PrintWriter(outputStream, true);
+			// 	// BufferedReader in = new BufferedReader(inputStreamReader);
 
 
 
-				// if (!in.readLine().equals("JOIN_GAME")) {
-				// 	socket.close();
-				// }
-
-				// System.out.println("Client " + socket.getLocalAddress() + ":" + socket.getPort() + " joined the game!!");
 
 
 
-				// String msg = "MOVE\nArguments: 0, 1, 2, etc...";
-				// out.println(msg);
-				// //out.flush();
+			// 	// if (!in.readLine().equals("JOIN_GAME")) {
+			// 	// 	socket.close();
+			// 	// }
+
+			// 	// System.out.println("Client " + socket.getLocalAddress() + ":" + socket.getPort() + " joined the game!!");
 
 
-				// String action = in.readLine();
-				// //String args = in.readLine();
 
-				// System.out.println(action);
+			// 	// String msg = "MOVE\nArguments: 0, 1, 2, etc...";
+			// 	// out.println(msg);
+			// 	// //out.flush();
 
-				// if (action != null) {
-				// 	chooseAction(new String[] {action, null});
-				// }
+
+			// 	// String action = in.readLine();
+			// 	// //String args = in.readLine();
+
+			// 	// System.out.println(action);
+
+			// 	// if (action != null) {
+			// 	// 	chooseAction(new String[] {action, null});
+			// 	// }
 
 
 
@@ -81,6 +88,11 @@ public class Server {
 				System.err.println(e.getMessage());
 			}
 		}
+	}
+
+	public static void updateTurn() {
+		turn++;
+		turn = turn % numPlayers;
 	}
 
 

@@ -78,7 +78,7 @@ public class Client {
 	private static String[] lookForServerResponse() {
 		String action = null;
 		String args = null;
-		while (action == null) {
+		//while (action == null) {
 			try {
 
 				action = in.readLine();
@@ -101,7 +101,7 @@ public class Client {
 				// 	i++;
 				// }
 			} catch (IOException e) {}
-		}
+		//}
 
 
 
