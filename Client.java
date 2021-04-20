@@ -4,24 +4,23 @@ import java.io.*;
 
 public class Client {
 
-
+	// Server parameters
 	private final static String SERVER_NAME = "localhost";
 	private final static int PORT = 1200;
 
+	// Conexion variables
 	private static Socket socket;
-
 	private static PrintWriter out;
 	private static BufferedReader in;
 
+	// Client actions
 	private static final String[] actions = {"MOVE", "MOVE_RESPONSE"};
+
+
 
 	public static void main(String[] args) {
 
-
-
 	System.setProperty("line.separador","\r\n");
-
-
 
 	initSocket();
 	
@@ -81,24 +80,30 @@ public class Client {
 		String args = null;
 		while (action == null) {
 			try {
-				int i = 0;
-				for (String line = in.readLine(); line != null; line = in.readLine()) {
-					switch (i) {
-						case 0:
-							action = line;
-							break;
-						case 1:
-							args = line;
-							break;
-						default:
-							System.out.println("Demasiados argumentos en el mensaje");
-							break;
-					}
+
+				action = in.readLine();
+				args = in.readLine();
+				// int i = 0;
+				// for (String line = in.readLine(); line != null; line = in.readLine()) {
+
+				// 	switch (i) {
+				// 		case 0:
+				// 			action = line;
+				// 			break;
+				// 		case 1:
+				// 			args = line;
+				// 			break;
+				// 		default:
+				// 			System.out.println("Demasiados argumentos en el mensaje");
+				// 			break;
+				// 	}
 					
-					i++;
-				}
+				// 	i++;
+				// }
 			} catch (IOException e) {}
 		}
+
+
 
 		String[] serverMessage = {action, args};
 		return serverMessage;
@@ -107,7 +112,7 @@ public class Client {
 	private static void move() {
 		System.out.print("Te toca, introduce tu jugada: ");
 		String move = System.console().readLine();
-		out.println(move);
+		out.println("C_MOVES" + "\n" + move);
 	}
 
 	private static void showMoveResponse(String response) {
@@ -140,5 +145,4 @@ public class Client {
 			}
 		}
 	}
-
 }
