@@ -24,44 +24,48 @@ public class Server {
 
 		
 		while (true) {
-
 			
 			try (Socket socket = serverSocket.accept()) { // try-with-resources --> socket is autoclosed.
 				
 
-				OutputStream outputStream = socket.getOutputStream();
-				InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-
-				//Writer out = new OutputStreamWriter(outputStream, "ASCII");
-				PrintWriter out = new PrintWriter(outputStream, true);
-				BufferedReader in = new BufferedReader(inputStreamReader);
+				ClientThread clientThread = new ClientThread(socket);
+				clientThread.start();
 
 
 
+				// OutputStream outputStream = socket.getOutputStream();
+				// InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+
+				// //Writer out = new OutputStreamWriter(outputStream, "ASCII");
+				// PrintWriter out = new PrintWriter(outputStream, true);
+				// BufferedReader in = new BufferedReader(inputStreamReader);
 
 
 
-				if (!in.readLine().equals("JOIN_GAME")) {
-					socket.close();
-				}
-
-				System.out.println("Client " + socket.getLocalAddress() + ":" + socket.getPort() + " joined the game!!");
 
 
 
-				String msg = "MOVE\nArguments: 0, 1, 2, etc...";
-				out.println(msg);
-				//out.flush();
+				// if (!in.readLine().equals("JOIN_GAME")) {
+				// 	socket.close();
+				// }
+
+				// System.out.println("Client " + socket.getLocalAddress() + ":" + socket.getPort() + " joined the game!!");
 
 
-				String action = in.readLine();
-				//String args = in.readLine();
 
-				System.out.println(action);
+				// String msg = "MOVE\nArguments: 0, 1, 2, etc...";
+				// out.println(msg);
+				// //out.flush();
 
-				if (action != null) {
-					chooseAction(new String[] {action, null});
-				}
+
+				// String action = in.readLine();
+				// //String args = in.readLine();
+
+				// System.out.println(action);
+
+				// if (action != null) {
+				// 	chooseAction(new String[] {action, null});
+				// }
 
 
 
@@ -70,7 +74,7 @@ public class Server {
 
 				
 			
-				socket.close(); // try () {}
+				// socket.close(); // try () {}
 
 			} catch (IOException e) {
 				// problem with one client; don't shut down the server
