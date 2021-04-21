@@ -72,51 +72,36 @@ public class Client {
 	}
 
 	private static void joinGame() {
-		out.println("JOIN_GAME");
+		out.println("JOIN_GAME\n");
 	}
 
 	private static String[] lookForServerResponse() {
 		String action = null;
-		String args = null;
-		//while (action == null) {
+		String args = "null";
 			try {
 
-				action = in.readLine();
+				while (action == null || action.length() < 1) {
+					action = in.readLine();
+				}
 				args = in.readLine();
-				// int i = 0;
-				// for (String line = in.readLine(); line != null; line = in.readLine()) {
 
-				// 	switch (i) {
-				// 		case 0:
-				// 			action = line;
-				// 			break;
-				// 		case 1:
-				// 			args = line;
-				// 			break;
-				// 		default:
-				// 			System.out.println("Demasiados argumentos en el mensaje");
-				// 			break;
-				// 	}
-					
-				// 	i++;
-				// }
-			} catch (IOException e) {}
-		//}
+			} catch (IOException e) {
+				System.out.print("Error de lectura");
+			}
 
-
-
-		String[] serverMessage = {action, args};
-		return serverMessage;
+		return new String[] {action, args};
 	}
 
 	private static void move() {
 		System.out.print("Te toca, introduce tu jugada: ");
 		String move = System.console().readLine();
-		out.println("C_MOVES" + "\n" + move);
+		out.println("C_MOVES" + "\n" + move + "\n");
 	}
 
 	private static void showMoveResponse(String response) {
-		System.out.println("Resultado: " + response);
+		System.out.println(response);
+		System.out.println("Esperando a los oponentes...\n");
+
 	}
 
 	private static void chooseAction(String[] serverMessage) {

@@ -3,15 +3,23 @@ import java.util.*;
 import java.io.*;
 
 
+
+
 class ClientThread extends Thread {
 
 
 	private Socket socket;
 	private int id;
+	private char[] combination;
 
-	public ClientThread(Socket socket, int id) {
+	private Writer out;
+	private BufferedReader in;
+
+
+	public ClientThread(Socket socket, int id, char[] combination) {
 		this.socket = socket;
 		this.id = id;
+		this.combination = combination;
 	}
 
 	public void run() {
@@ -28,16 +36,17 @@ class ClientThread extends Thread {
 	private void manageRequest() throws UnknownHostException, IOException {
 
 
-		System.out.println("Soy " + id + "turno: " + Server.turn + "players: " + Server.numPlayers);
+		System.out.println("Soy: " + id + ", turno: " + Server.turn + ", players: " + Server.numPlayers);
+		System.out.println("Tengo que adivinar: " + combination[0]+combination[1]+combination[2]+combination[3]);
 
 
 		OutputStream outputStream = socket.getOutputStream();
 		InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
 
 		
-		Writer out = new OutputStreamWriter(outputStream, "ASCII");
+		out = new OutputStreamWriter(outputStream, "ASCII");
 		// //PrintWriter out = new PrintWriter(outputStream, true);
-		BufferedReader in = new BufferedReader(inputStreamReader);
+		in = new BufferedReader(inputStreamReader);
 
 
 		if (!in.readLine().equals("JOIN_GAME")) {
@@ -53,20 +62,15 @@ class ClientThread extends Thread {
 					sleep(2000);
 				} catch (InterruptedException e) {}
 			}
-
-
-			System.out.println("Me toca " + id);
-
 			
-			String msg = "MOVE\nArguments: 0, 1, 2, etc...\n";
+			String msg = "MOVE\nnull\n";
 			out.write(msg);
 			out.flush();
 
 
-			String action = in.readLine();
-			String args = in.readLine();
+			String[] message = readClientRequest();
+			chooseAction(message);
 
-			System.out.println(action + args);
 
 			Server.updateTurn();
 
@@ -82,10 +86,77 @@ class ClientThread extends Thread {
 
 	}
 
+	private String[] readClientRequest() {
 
+		String action = null;
+		String args = "null";
+
+		try {
+			
+			while (action == null || action.length() < 1) {
+				action = in.readLine();
+			}
+			args = in.readLine();
+			
+		} catch (IOException e) {
+			System.out.println("No se ha podido leer");
+		}		
+
+		return new String[] {action, args};
+	}
+
+	private void chooseAction(String[] message) {
+		String action = message[0];
+		String args = message[1];
+
+		for (int i = 0; i < Server.actions.length; i++) {
+			if (Server.actions[i].equals(action)) {
+
+				switch (i) {
+					
+					case 0: // C_MOVES
+						processClientMove(args);
+						break;
+					default:
+						System.out.println("Invalid action");
+						break;
+
+				}
+				return;
+			}
+		}
+		System.out.println("Invalid action: " + action);
+	}
+
+
+	private void processClientMove(String move) {
+		
+		int black = 0;
+		int white = 0;		
+
+		for (int i = 0; i < 4; i++) {
+			if (move.charAt(i) == combination[i]) {
+				black++;
+			} else if (String.valueOf(combination).indexOf(move.charAt(i)) != -1) {
+				white++;
+			}
+		}
+
+		String result = "Resultado: " + String.valueOf(move) + " --> " + " B" + black + "W" + white;
+
+		send("MOVE_RESPONSE\n" + result + "\n");
+		
+	}
+
+	private void send(String message) {
+		try {
+			out.write(message);
+			out.flush();
+		} catch (IOException e) {
+			System.out.println("Error al enviar");
+		}
+	}
 
 	
 }
-
-
 

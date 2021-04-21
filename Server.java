@@ -1,7 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.util.Date;
-
+import java.util.Random;
 
 public class Server {
 
@@ -11,7 +11,10 @@ public class Server {
 	public static int numPlayers = 0;
 
 	// Server actions
-	private static final String[] actions = {"C_MOVES"};
+	public static final String[] actions = {"C_MOVES"};
+
+	public static final char[] colors = {'R', 'Y', 'B', 'G'};
+	private static char[][] combinations;
 
 
 	private static ServerSocket serverSocket;
@@ -23,6 +26,7 @@ public class Server {
 		
 
 		initServerSocket();
+		combinations = generateCombinations();
 
 	
 
@@ -32,56 +36,14 @@ public class Server {
 			try { // try-with-resources --> socket is autoclosed.
 				
 				
-				
 				Socket socket = serverSocket.accept();
-				ClientThread clientThread = new ClientThread(socket, numPlayers++);
+
+				Random r = new Random();
+				char[] c = combinations[r.nextInt(5)];
+
+
+				ClientThread clientThread = new ClientThread(socket, numPlayers++, c);
 				clientThread.start();
-
-
-
-
-			// 	// OutputStream outputStream = socket.getOutputStream();
-			// 	// InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-
-			// 	// //Writer out = new OutputStreamWriter(outputStream, "ASCII");
-			// 	// PrintWriter out = new PrintWriter(outputStream, true);
-			// 	// BufferedReader in = new BufferedReader(inputStreamReader);
-
-
-
-
-
-
-			// 	// if (!in.readLine().equals("JOIN_GAME")) {
-			// 	// 	socket.close();
-			// 	// }
-
-			// 	// System.out.println("Client " + socket.getLocalAddress() + ":" + socket.getPort() + " joined the game!!");
-
-
-
-			// 	// String msg = "MOVE\nArguments: 0, 1, 2, etc...";
-			// 	// out.println(msg);
-			// 	// //out.flush();
-
-
-			// 	// String action = in.readLine();
-			// 	// //String args = in.readLine();
-
-			// 	// System.out.println(action);
-
-			// 	// if (action != null) {
-			// 	// 	chooseAction(new String[] {action, null});
-			// 	// }
-
-
-
-
-
-
-				
-			
-				// socket.close(); // try () {}
 
 			} catch (IOException e) {
 				// problem with one client; don't shut down the server
@@ -123,37 +85,6 @@ public class Server {
 		}
 	}
 
-
-	// private static String[] lookForServerResponse() {
-	// 	String action = null;
-	// 	String args = null;
-	// 	while (action == null) {
-	// 		try {
-	// 			int i = 0;
-	// 			for (String line = in.readLine(); line != null; line = in.readLine()) {
-	// 				switch (i) {
-	// 					case 0:
-	// 						action = line;
-	// 						break;
-	// 					case 1:
-	// 						args = line;
-	// 						break;
-	// 					default:
-	// 						System.out.println("Demasiados argumentos en el mensaje");
-	// 						break;
-	// 				}
-					
-	// 				i++;
-	// 			}
-	// 		} catch (IOException e) {}
-	// 	}
-
-	// 	String[] serverMessage = {action, args};
-	// 	return serverMessage;
-	// }
-
-
-
 	private static void initServerSocket() {
 		serverSocket = null;
 
@@ -163,5 +94,34 @@ public class Server {
 			System.out.print("Fail creating the socket at port " + PORT + "\n");
 		}
 	}
+
+
+	// JUEGO
+
+	private static char[][] generateCombinations() {
+		Random random = new Random();
+		
+
+		char[][] combinations = new char[5][4];
+	
+		for (int n = 0; n < 5; n++) {
+	
+			char[] l = new char[4];
+
+			for (int i = 0; i < 4; i++) {
+				l[i] = colors[random.nextInt(4)];
+			}
+		
+			combinations[n] = l;
+		}
+
+		return combinations;
+	
+	}
+
+
+
+
+
 
 }
