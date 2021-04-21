@@ -11,7 +11,7 @@ public class Server {
 	public static int numPlayers = 0;
 
 	// Server actions
-	public static final String[] actions = {"C_MOVES"};
+	public static final String[] actions = {"C_MOVES", "LOSE"};
 
 	public static final char[] colors = {'R', 'Y', 'B', 'G'};
 	private static char[][] combinations;

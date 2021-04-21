@@ -117,6 +117,9 @@ class ClientThread extends Thread {
 					case 0: // C_MOVES
 						processClientMove(args);
 						break;
+					case 1: // LOSE
+						disconnect();
+						break;
 					default:
 						System.out.println("Invalid action");
 						break;
@@ -142,9 +145,14 @@ class ClientThread extends Thread {
 			}
 		}
 
-		String result = "Resultado: " + String.valueOf(move) + " --> " + " B" + black + "W" + white;
+		if (black == 4) { // CLIENTE GANA
+			send("WIN\nGANASTE!!\n");
+		} else { // CLIENTE NO GANA
+			String result = "B" + black + "W" + white;
+			send("MOVE_RESPONSE\n" + result + "\n");
+		}
 
-		send("MOVE_RESPONSE\n" + result + "\n");
+		
 		
 	}
 
@@ -155,6 +163,13 @@ class ClientThread extends Thread {
 		} catch (IOException e) {
 			System.out.println("Error al enviar");
 		}
+	}
+
+	private void disconnect() {
+		send("LOSE\nnull\n");
+		try {
+			socket.close();
+		} catch (IOException e) {}
 	}
 
 	

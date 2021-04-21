@@ -14,13 +14,19 @@ public class Client {
 	private static BufferedReader in;
 
 	// Client actions
-	private static final String[] actions = {"MOVE", "MOVE_RESPONSE"};
+	private static final String[] actions = {"MOVE", "MOVE_RESPONSE", "WIN", "LOSE"};
+	private static boolean win = false;
+	private static int totalTurns = 2;
+	private static int turn = 0;
 
+	private static String[] log;
 
 
 	public static void main(String[] args) {
 
 	System.setProperty("line.separador","\r\n");
+	log = new String[totalTurns + 1];
+
 
 	initSocket();
 	
@@ -37,12 +43,16 @@ public class Client {
 
 		String[] serverMessage;
 
-		for (int i = 0; i < 15; i++) {
+
+
+		while (turn <= totalTurns && !win) {
 			serverMessage = lookForServerResponse();
 			chooseAction(serverMessage);
 		}
 
-		socket.close();
+		if (!win) {
+			System.out.println("Se te han acabado los turnos, has perdido :)");
+		}
 		
 
 	} catch(IOException e) {
@@ -93,15 +103,39 @@ public class Client {
 	}
 
 	private static void move() {
+
 		System.out.print("Te toca, introduce tu jugada: ");
 		String move = System.console().readLine();
+		log[turn++] = move;
 		out.println("C_MOVES" + "\n" + move + "\n");
+
+		if (turn >= totalTurns) {
+			out.println("LOSE" + "\n" + "null" + "\n");
+		}
 	}
 
 	private static void showMoveResponse(String response) {
-		System.out.println(response);
+
+		log[turn - 1] += " --> " + response;
+
+
+		clearScreen();
+		for (int i = 0; i < turn; i++) {
+			System.out.println(log[i]);
+		}
+
+
+		System.out.println("\nResultado: " + log[turn - 1]);
 		System.out.println("Esperando a los oponentes...\n");
 
+		
+	}
+
+	private static void showWinMessage(String winMessage) {
+
+		win = true;
+		clearScreen();
+		System.out.println(winMessage);
 	}
 
 	private static void chooseAction(String[] serverMessage) {
@@ -122,12 +156,46 @@ public class Client {
 					case 1: // MOVE RESPONSE
 						showMoveResponse(args);
 						break;
+					case 2: // WIN
+						showWinMessage(args);
+						break;
+					case 3: // LOSE
+						//disconnect();
 					default:
-						System.out.println("Invalid action key");
+						System.out.println("Invalid action key " + action);
 						break;
 				}
 				return;
 			}
 		}
 	}
+
+	public static void clearScreen() {
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
+		try {
+			new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+		} catch(IOException ex) {} 
+		catch (InterruptedException ex) {}
+	}
+
+	// private static void disconnect() {
+
+	// 	System.out.println("Se te han acabado los turnos, has perdido :)");
+		
+	// 	try {
+	// 		socket.close();
+	// 	} catch (IOException e) {}
+		
+	// }
+
+
+
+	// private void send(String message) {
+	// 	try {
+	// 		out.println(message);
+	// 	} catch (IOException e) {
+	// 		System.out.println("Error al enviar");
+	// 	}
+	// }
 }
