@@ -1,10 +1,3 @@
-// import java.net.*;
-// import java.util.*;
-// import java.io.*;
-
-
-
-
 // class ClientThread extends Thread {
 
 
@@ -36,8 +29,7 @@
 // 	private void manageRequest() throws UnknownHostException, IOException {
 
 
-// 		System.out.println("Soy: " + id + ", turno: " + Server.turn + ", players: " + Server.numPlayers);
-// 		System.out.println("Tengo que adivinar: " + combination[0]+combination[1]+combination[2]+combination[3]);
+// 		System.out.println("Tengo que adivinar: " + String.valueOf(combination));
 
 
 // 		OutputStream outputStream = socket.getOutputStream();
@@ -45,7 +37,6 @@
 
 		
 // 		out = new OutputStreamWriter(outputStream, "ASCII");
-// 		// //PrintWriter out = new PrintWriter(outputStream, true);
 // 		in = new BufferedReader(inputStreamReader);
 
 
@@ -56,7 +47,7 @@
 
 // 		for (int i = 0; i < 15; i++) {
 
-// 			// Espere torn
+// 			// Espero turno
 // 			while (Server.turn != id) {
 // 				try {
 // 					sleep(2000);
@@ -80,17 +71,7 @@
 
 
 // 			Server.updateTurn();
-
-
-// 			//chooseAction(new String[] {action, args});
-
-// 			// if (action != null) {
-// 			// 	chooseAction(new String[] {action, null});
-// 			// }
 // 		}
-
-
-
 // 	}
 
 // 	private String[] readClientRequest() {
@@ -124,9 +105,6 @@
 // 					case 0: // C_MOVES
 // 						processClientMove(args);
 // 						break;
-// 					case 1: // LOSE
-// 						disconnect();
-// 						break;
 // 					default:
 // 						System.out.println("Invalid action");
 // 						break;
@@ -155,13 +133,11 @@
 // 		if (black == 4) { // CLIENTE GANA
 // 			send("WIN\nGANASTE!!\n");
 // 			Server.someoneWon = id;
+
 // 		} else { // CLIENTE NO GANA
 // 			String result = "B" + black + "W" + white;
 // 			send("MOVE_RESPONSE\n" + result + "\n");
 // 		}
-
-		
-		
 // 	}
 
 // 	private void send(String message) {
@@ -171,15 +147,5 @@
 // 		} catch (IOException e) {
 // 			System.out.println("Error al enviar");
 // 		}
-// 	}
-
-// 	private void disconnect() {
-// 		send("LOSE\nnull\n");
-// 		try {
-// 			socket.close();
-// 		} catch (IOException e) {}
-// 	}
-
-	
+// 	}	
 // }
-
