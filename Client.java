@@ -15,8 +15,8 @@ public class Client {
 
 	// Client actions
 	private static final String[] actions = {"MOVE", "MOVE_RESPONSE", "WIN", "LOSE"};
-	private static boolean win = false;
-	private static int totalTurns = 2;
+	private static boolean end = false;
+	private static int totalTurns = 15;
 	private static int turn = 0;
 
 	private static String[] log;
@@ -24,40 +24,41 @@ public class Client {
 
 	public static void main(String[] args) {
 
-	System.setProperty("line.separador","\r\n");
-	log = new String[totalTurns + 1];
+		System.setProperty("line.separador","\r\n");
+		log = new String[totalTurns + 1];
 
 
-	initSocket();
-	
-	try {
-
-		OutputStream outputStream = socket.getOutputStream();
-		InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+		initSocket();
 		
-		out = new PrintWriter(outputStream, true);
-		in = new BufferedReader(inputStreamReader);
+		try {
+
+			OutputStream outputStream = socket.getOutputStream();
+			InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+			
+			out = new PrintWriter(outputStream, true);
+			in = new BufferedReader(inputStreamReader);
 
 
-		joinGame();
+			joinGame();
 
-		String[] serverMessage;
+			System.out.println("");
+
+			String[] serverMessage;
+
+			while (turn < totalTurns && !end) {
+				serverMessage = lookForServerResponse();
+				chooseAction(serverMessage);
+			}
 
 
+			if (!end) {
+				System.out.println("EMPATE!!, se han acabado los turnos de todos los jugadores.");
+			}
+			
 
-		while (turn <= totalTurns && !win) {
-			serverMessage = lookForServerResponse();
-			chooseAction(serverMessage);
+		} catch(IOException e) {
+			System.out.println("No es posible realizar la conexión\n" + e);
 		}
-
-		if (!win) {
-			System.out.println("Se te han acabado los turnos, has perdido :)");
-		}
-		
-
-	} catch(IOException e) {
-		System.out.println("No es posible realizar la conexión\n" + e);
-	}
 
 	}
 
@@ -105,18 +106,23 @@ public class Client {
 	private static void move() {
 
 		System.out.print("Te toca, introduce tu jugada: ");
-		String move = System.console().readLine();
-		log[turn++] = move;
-		out.println("C_MOVES" + "\n" + move + "\n");
 
-		if (turn >= totalTurns) {
-			out.println("LOSE" + "\n" + "null" + "\n");
-		}
+
+		String move;
+
+		do {
+			move = System.console().readLine();
+			System.out.print("INTRODUCE 4 LETRAS:\n");
+		} while (move.length() != 4);
+
+
+		log[turn] = move;
+		out.println("C_MOVES" + "\n" + move + "\n");
 	}
 
 	private static void showMoveResponse(String response) {
 
-		log[turn - 1] += " --> " + response;
+		log[turn++] += " --> " + response;
 
 
 		clearScreen();
@@ -133,7 +139,7 @@ public class Client {
 
 	private static void showWinMessage(String winMessage) {
 
-		win = true;
+		end = true;
 		clearScreen();
 		System.out.println(winMessage);
 	}
@@ -160,7 +166,8 @@ public class Client {
 						showWinMessage(args);
 						break;
 					case 3: // LOSE
-						//disconnect();
+						gameOver(args);
+						break;
 					default:
 						System.out.println("Invalid action key " + action);
 						break;
@@ -168,6 +175,16 @@ public class Client {
 				return;
 			}
 		}
+	}
+
+	private static void gameOver(String id) {
+
+		int fakeID = Integer.parseInt(id) + 1;
+		
+		clearScreen();
+		System.out.println("Ha ganado el jugador " + fakeID + "\nGAME OVER");
+		end = true;
+
 	}
 
 	public static void clearScreen() {
@@ -178,24 +195,4 @@ public class Client {
 		} catch(IOException ex) {} 
 		catch (InterruptedException ex) {}
 	}
-
-	// private static void disconnect() {
-
-	// 	System.out.println("Se te han acabado los turnos, has perdido :)");
-		
-	// 	try {
-	// 		socket.close();
-	// 	} catch (IOException e) {}
-		
-	// }
-
-
-
-	// private void send(String message) {
-	// 	try {
-	// 		out.println(message);
-	// 	} catch (IOException e) {
-	// 		System.out.println("Error al enviar");
-	// 	}
-	// }
 }
