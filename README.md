@@ -9,14 +9,10 @@ Simple client-server game made with java
 
 1. Compile
 
-'''sh
-	javac Server.java
-	javac Client.java
-'''
+> javac Server.java  
+> javac Client.java
 
 2. Run
 
-'''
-	java Server
-	java Client
-'''
+> java Server  
+> java Client
